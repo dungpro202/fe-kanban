@@ -30,6 +30,7 @@
               }
             ],
             "styles": [
+              "src/tailwind-setup.css",
               "src/styles.scss"
             ]
           },
