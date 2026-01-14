@@ -1,0 +1,21 @@
+<div class="flex h-screen bg-white">
+	<aside class="w-64 bg-slate-800 text-white p-4 hidden md:block">
+		<h2 class="text-xl font-bold mb-6">Kanban App</h2>
+		<nav>
+			<ul class="space-y-2">
+				<li class="p-2 hover:bg-slate-700 rounded cursor-pointer">Dashboard</li>
+				<li class="p-2 hover:bg-slate-700 rounded cursor-pointer">Settings</li>
+			</ul>
+		</nav>
+	</aside>
+
+	<main class="flex-1 flex flex-col overflow-hidden">
+		<header class="h-14 bg-white border-b flex items-center px-6 shadow-sm">
+			Header (User Info)
+		</header>
+
+		<div class="flex-1 overflow-auto p-4 bg-gray-50">
+			<router-outlet></router-outlet>
+		</div>
+	</main>
+</div>

@@ -1,0 +1,59 @@
+<div class="w-full">
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold text-slate-800">Chào mừng trở lại! 👋</h1>
+    <p class="text-slate-500 mt-2">Nhập thông tin để truy cập Kanban Board của bạn</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+    {{ errorMessage }}
+  </div>
+
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+    
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+      <input 
+        type="email" 
+        formControlName="email"
+        class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+        [class.border-red-500]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+        placeholder="name@company.com"
+      >
+      <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="text-red-500 text-xs mt-1">
+        <span *ngIf="loginForm.get('email')?.errors?.['required']">Email không được để trống</span>
+        <span *ngIf="loginForm.get('email')?.errors?.['email']">Email không hợp lệ</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="flex justify-between items-center mb-1">
+        <label class="block text-sm font-medium text-slate-700">Mật khẩu</label>
+        <a href="#" class="text-xs text-blue-600 hover:underline">Quên mật khẩu?</a>
+      </div>
+      <input 
+        type="password" 
+        formControlName="password"
+        class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+        [class.border-red-500]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+        placeholder="••••••••"
+      >
+      <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-red-500 text-xs mt-1">
+        Mật khẩu phải có ít nhất 6 ký tự
+      </div>
+    </div>
+
+    <button 
+      type="submit" 
+      [disabled]="loginForm.invalid || isLoading"
+      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition duration-200 flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed"
+    >
+      <span *ngIf="isLoading" class="mr-2 animate-spin">⚪</span>
+      {{ isLoading ? 'Đang xử lý...' : 'Đăng nhập' }}
+    </button>
+
+    <p class="text-center text-sm text-slate-600 mt-4">
+      Chưa có tài khoản? 
+      <a routerLink="/register" class="text-blue-600 font-semibold hover:underline cursor-pointer">Đăng ký ngay</a>
+    </p>
+  </form>
+</div>
