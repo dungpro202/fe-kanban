@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
+import { User } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +10,9 @@ import { map } from 'rxjs/operators';
 export class AuthService {
   // URL Backend (NestJS đang chạy port 3000)
   private apiUrl = 'http://localhost:3000';
+
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -37,5 +42,19 @@ export class AuthService {
     // check xem có token không
     // todo : Cần kiểm tra token hợp lệ hơn, hết hạn hay chưa
     return !!localStorage.getItem('access_token');
+  }
+
+  // Lấy thông tin User
+  getProfile() {
+    return this.http.get<User>(`${this.apiUrl}/auth/profile`).pipe(
+      tap(user => {
+        this.currentUserSubject.next(user); // Lưu user vào store
+      })
+    );
+  }
+
+  // Hàm tiện ích để lấy value hiện tại
+  getCurrentUserValue(): User | null {
+    return this.currentUserSubject.value;
   }
 }

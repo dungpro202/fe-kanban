@@ -49,9 +49,7 @@ export class LoginComponent {
         // 3. Thành công -> Chuyển hướng vào trang Board
         this.isLoading = false;
         console.log('Login success:', res);
-        // Giả sử server trả về user, ta điều hướng vào board đầu tiên hoặc trang dashboard
-        // Tạm thời mình fix cứng vào board id 1 để test
-        this.router.navigate(['/app/boards/1']);
+        this.router.navigate(['/app']);
       },
       error: (err) => {
         // 4. Thất bại -> Hiện lỗi

@@ -1,0 +1,62 @@
+<div class="p-6">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-2xl font-bold text-slate-800">Danh sách dự án</h1>
+    <button (click)="showCreateModal = true" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition flex items-center gap-2">
+      <span>+</span> Tạo bảng mới
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center py-10 text-gray-500">
+    Đang tải dữ liệu...
+  </div>
+
+  <div *ngIf="!isLoading && boards.length === 0" class="text-center py-20 bg-slate-50 rounded-xl border border-dashed border-slate-300">
+    <p class="text-slate-500 mb-4">Bạn chưa có bảng nào.</p>
+    <button (click)="showCreateModal = true" class="text-blue-600 font-semibold hover:underline">Tạo bảng đầu tiên ngay</button>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <a *ngFor="let board of boards" [routerLink]="['/app/boards', board.id]" 
+       class="block bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition group cursor-pointer">
+      
+      <h3 class="font-bold text-lg text-slate-800 group-hover:text-blue-600 mb-2 truncate">
+        {{ board.title }}
+      </h3>
+      
+      <p class="text-slate-500 text-sm mb-4 line-clamp-2 h-10">
+        {{ board.description || 'Không có mô tả' }}
+      </p>
+
+      <div class="flex items-center justify-between text-xs text-slate-400 pt-4 border-t border-slate-100">
+        <span>Updated {{ board.updatedAt | date:'shortDate' }}</span>
+        <div class="flex gap-3">
+          <span title="Số cột">📊 {{ board._count?.columns || 0 }}</span>
+          <span title="Thành viên">👥 {{ board._count?.members || 1 }}</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<div *ngIf="showCreateModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+    <h2 class="text-xl font-bold mb-4">Tạo bảng mới</h2>
+    
+    <form [formGroup]="createForm" (ngSubmit)="createBoard()">
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-slate-700 mb-1">Tên bảng</label>
+        <input formControlName="title" type="text" class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Ví dụ: Marketing Campaign">
+      </div>
+      
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-slate-700 mb-1">Mô tả</label>
+        <textarea formControlName="description" class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" rows="3"></textarea>
+      </div>
+
+      <div class="flex justify-end gap-2">
+        <button type="button" (click)="showCreateModal = false" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded">Hủy</button>
+        <button type="submit" [disabled]="createForm.invalid" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50">Tạo mới</button>
+      </div>
+    </form>
+  </div>
+</div>
