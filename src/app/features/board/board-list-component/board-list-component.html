@@ -30,8 +30,8 @@
       <div class="flex items-center justify-between text-xs text-slate-400 pt-4 border-t border-slate-100">
         <span>Updated {{ board.updatedAt | date:'shortDate' }}</span>
         <div class="flex gap-3">
-          <span title="Số cột">📊 {{ board._count?.columns || 0 }}</span>
-          <span title="Thành viên">👥 {{ board._count?.members || 1 }}</span>
+          <span title="Số cột">📊 {{ board.columns || 0 }}</span>
+          <span title="Thành viên">👥 {{ board.members || 1 }}</span>
         </div>
       </div>
     </a>

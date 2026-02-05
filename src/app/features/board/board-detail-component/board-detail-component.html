@@ -1,1 +1,125 @@
-<p>board-detail-component works!</p>
+<div *ngIf="!board" class="h-screen flex items-center justify-center bg-blue-600 text-white font-semibold">
+  <div class="flex flex-col items-center gap-2">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+    <span>Đang tải dữ liệu bảng...</span>
+  </div>
+</div>
+
+<div class="h-screen flex flex-col bg-blue-600" *ngIf="board">
+  
+  <div class="h-14 bg-black/20 backdrop-blur-sm flex items-center px-4 justify-between text-white shrink-0 shadow-sm z-10">
+    <div class="flex items-center gap-4">
+      <h1 class="font-bold text-lg cursor-pointer hover:bg-white/20 px-3 py-1 rounded transition">
+        {{ board.title }}
+      </h1>
+      <span class="bg-white/20 px-2 py-0.5 rounded text-xs font-medium backdrop-blur-md">
+        Private
+      </span>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <div class="flex -space-x-2 overflow-hidden">
+        <div class="w-8 h-8 rounded-full bg-red-500 border-2 border-blue-600 flex items-center justify-center text-xs font-bold" title="Member 1">A</div>
+        <div class="w-8 h-8 rounded-full bg-emerald-500 border-2 border-blue-600 flex items-center justify-center text-xs font-bold" title="Member 2">B</div>
+        <div class="w-8 h-8 rounded-full bg-slate-200 border-2 border-blue-600 flex items-center justify-center text-xs text-slate-600 font-bold" *ngIf="(board.members.length || 0) > 2">
+          +{{ (board.members.length || 0) - 2 }}
+        </div>
+      </div>
+      <button class="bg-white/20 hover:bg-white/30 text-sm px-3 py-1.5 rounded transition font-medium">
+        Share
+      </button>
+    </div>
+  </div>
+
+  <div class="flex-1 overflow-x-auto overflow-y-hidden p-4">
+    <div class="flex h-full gap-4 items-start" cdkDropListGroup>
+      
+      <div *ngFor="let column of board.columns" class="w-72 bg-[#f1f2f4] rounded-xl shrink-0 flex flex-col max-h-full shadow-lg border border-slate-300/50">
+        
+        <div class="p-3 px-4 font-semibold text-sm text-[#172b4d] flex justify-between items-center cursor-pointer handle-drag">
+          <h2>{{ column.title }}</h2>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-500 bg-slate-200 px-2 py-0.5 rounded-full">{{ column.tasks.length }}</span>
+            <button class="text-slate-500 hover:bg-slate-200 p-1 rounded">•••</button>
+          </div>
+        </div>
+
+        <div 
+          cdkDropList
+          [cdkDropListData]="column.tasks"
+          (cdkDropListDropped)="drop($event, column.id)"
+          class="flex-1 overflow-y-auto px-2 pb-2 min-h-[50px] space-y-2 custom-scrollbar"
+        >
+          
+          <div 
+            *ngFor="let task of column.tasks" 
+            cdkDrag
+            [cdkDragData]="task" 
+            class="bg-white p-3 rounded-lg shadow-sm border border-slate-200 cursor-grab hover:border-blue-400 hover:shadow-md group active:cursor-grabbing transition-all relative z-0"
+          >
+            <div class="flex gap-1 mb-2" *ngIf="task.title.toLowerCase().includes('bug')">
+              <div class="h-1.5 w-10 bg-red-400 rounded-full"></div>
+            </div>
+
+            <p class="text-sm text-[#172b4d] leading-snug">{{ task.title }}</p>
+            
+            <div class="mt-3 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity" [class.opacity-100]="task.assignee">
+               <div class="flex gap-2 text-slate-400 text-xs">
+                 </div>
+
+               <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center font-bold ring-2 ring-white" *ngIf="task.assignee">
+                 {{ task.assignee.name?.charAt(0)?.toUpperCase() || 'U' }}
+               </div>
+            </div>
+
+            <div *cdkDragPlaceholder class="opacity-0"></div>
+          </div>
+
+        </div>
+
+        <div class="p-2 pt-0 mx-1 mb-1">
+          
+          <div *ngIf="addingTaskColumnId === column.id" class="animate-fadeIn">
+            <textarea 
+              #newTaskInput
+              class="w-full p-3 rounded-lg border-2 border-blue-500 focus:ring-0 outline-none text-sm shadow-sm resize-none block"
+              rows="3"
+              placeholder="Nhập tiêu đề cho thẻ này..."
+              (keydown.enter)="$event.preventDefault(); createTask(column.id, newTaskInput.value)"
+              (keydown.escape)="addingTaskColumnId = null"
+              autoFocus
+            ></textarea>
+            <div class="flex items-center gap-2 mt-2">
+              <button 
+                (click)="createTask(column.id, newTaskInput.value)" 
+                class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm font-medium transition"
+              >
+                Thêm thẻ
+              </button>
+              <button 
+                (click)="addingTaskColumnId = null" 
+                class="text-slate-500 hover:bg-slate-200 hover:text-slate-700 p-1.5 rounded"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <button 
+            *ngIf="addingTaskColumnId !== column.id"
+            (click)="addingTaskColumnId = column.id"
+            class="w-full text-left p-2 text-slate-500 hover:text-slate-700 text-sm hover:bg-slate-200 rounded-lg flex items-center gap-2 transition font-medium"
+          >
+            <span class="text-lg leading-none">+</span> Thêm thẻ
+          </button>
+        </div>
+
+      </div>
+
+      <div class="w-72 bg-white/20 backdrop-blur-sm rounded-xl shrink-0 p-3 text-white font-semibold cursor-pointer hover:bg-white/30 transition flex items-center gap-2 border border-white/10 shadow-sm">
+        <span>+</span> Thêm danh sách khác
+      </div>
+
+    </div>
+  </div>
+</div>
