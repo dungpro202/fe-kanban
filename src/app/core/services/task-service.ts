@@ -21,4 +21,14 @@ export class TaskService {
       position: newPosition
     });
   }
+
+  // 3. Cập nhật thông tin Task (Title, Description...)
+  updateTask(id: number, data: { title?: string; description?: string }) {
+    return this.http.patch<Task>(`${this.apiUrl}/${id}`, data);
+  }
+
+  // 4. Xóa Task
+  deleteTask(id: number) {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
 }
