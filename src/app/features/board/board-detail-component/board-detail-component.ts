@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BoardService } from '../../../core/services/board-service';
-import { Board, Task } from '../../../core/models/board.model';
+import { Board, Column, Task } from '../../../core/models/board.model';
 import { TaskService } from '../../../core/services/task-service';
 import { TaskDetailComponent } from '../task-detail-component/task-detail-component';
 import { ColumnService } from '../../../core/services/column-service';
@@ -188,5 +188,29 @@ export class BoardDetailComponent {
   // 3. ĐỔI TÊN CỘT (Sẽ làm ở UI bước sau)
   updateColumnTitle(columnId: number, newTitle: string) {
     this.columnService.updateColumn(columnId, newTitle).subscribe();
+  }
+
+  // 🔥 LOGIC KÉO THẢ CỘT
+  dropColumn(event: CdkDragDrop<Column[]>) {
+    // Nếu kéo thả tại chỗ thì bỏ qua
+    if (event.previousIndex === event.currentIndex) return;
+
+    if (this.board) {
+      // 1. Cập nhật UI ngay lập tức cho mượt
+      moveItemInArray(this.board.columns, event.previousIndex, event.currentIndex);
+      
+      // Lấy ID của cột vừa bị kéo (nó đang nằm ở vị trí mới rồi)
+      const columnId = this.board.columns[event.currentIndex].id;
+      const newPosition = event.currentIndex;
+
+      // 2. Gọi API để lưu vào Database
+      this.columnService.updateColumnPosition(columnId, newPosition).subscribe({
+        next: () => console.log(`Đã lưu vị trí mới của cột ${columnId}`),
+        error: (err) => {
+          alert('Lỗi khi lưu vị trí cột!');
+          this.loadBoardDetail(this.board!.id); // Lỗi thì load lại board
+        }
+      });
+    }
   }
 }

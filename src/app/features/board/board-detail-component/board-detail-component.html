@@ -39,12 +39,14 @@
   </div>
 
   <div class="flex-1 overflow-x-auto overflow-y-hidden p-4">
-    <div class="flex h-full gap-4 items-start" cdkDropListGroup>
+    <div class="flex h-full gap-4 items-start" cdkDropListGroup cdkDropList cdkDropListOrientation="horizontal"
+      [cdkDropListData]="board.columns" (cdkDropListDropped)="dropColumn($event)">
 
-      <div *ngFor="let column of board.columns"
+      <div *ngFor="let column of board.columns" cdkDrag
         class="w-72 bg-[#f1f2f4] rounded-xl shrink-0 flex flex-col max-h-full shadow-lg border border-slate-300/50">
 
-        <div
+        <div *cdkDragPlaceholder class="opacity-30 bg-gray-300 border-2 border-dashed border-gray-400 rounded-xl"></div>
+        <div cdkDragHandle
           class="p-3 px-4 font-semibold text-sm text-[#172b4d] flex justify-between items-center cursor-pointer handle-drag">
           <h2>{{ column.title }}</h2>
           <div class="flex items-center gap-2">

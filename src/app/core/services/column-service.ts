@@ -20,4 +20,9 @@ export class ColumnService {
   deleteColumn(id: number) {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+  // Cập nhật vị trí cột
+  updateColumnPosition(columnId: number, newPosition: number) {
+    return this.http.patch<Column>(`${this.apiUrl}/${columnId}`, { position: newPosition });
+  }
 }
