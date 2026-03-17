@@ -1,50 +1,46 @@
-<div class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm" (click)="close.emit()">
-  
-  <div class="bg-[#f4f5f7] w-full max-w-3xl rounded-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]" (click)="$event.stopPropagation()">
-    
+<div class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+  (click)="close.emit()">
+
+  <div class="bg-[#f4f5f7] w-full max-w-3xl rounded-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+    (click)="$event.stopPropagation()">
+
     <div class="p-4 pt-5 relative">
       <button (click)="close.emit()" class="absolute top-2 right-2 p-2 hover:bg-gray-200 rounded-full text-gray-500">
         ✕
       </button>
 
       <div class="flex gap-3 items-start">
-        <span class="mt-1 text-gray-600 text-lg">🪪</span> <div class="w-full">
-          <h2 *ngIf="!isEditingTitle" 
-              (click)="isEditingTitle = true"
-              class="text-xl font-bold text-gray-800 cursor-pointer hover:bg-gray-200 px-2 -ml-2 rounded w-full">
+        <span class="mt-1 text-gray-600 text-lg">🪪</span>
+        <div class="w-full">
+          <h2 *ngIf="!isEditingTitle" (click)="isEditingTitle = true"
+            class="text-xl font-bold text-gray-800 cursor-pointer hover:bg-gray-200 px-2 -ml-2 rounded w-full">
             {{ task.title }}
           </h2>
-          <input *ngIf="isEditingTitle"
-                 [(ngModel)]="task.title"
-                 (blur)="saveTitle()"
-                 (keydown.enter)="saveTitle()"
-                 class="text-xl font-bold text-gray-800 w-full px-2 -ml-2 rounded border-2 border-blue-500 focus:outline-none bg-white"
-                 autoFocus>
-          
+          <input *ngIf="isEditingTitle" [(ngModel)]="task.title" (blur)="saveTitle()" (keydown.enter)="saveTitle()"
+            class="text-xl font-bold text-gray-800 w-full px-2 -ml-2 rounded border-2 border-blue-500 focus:outline-none bg-white"
+            autoFocus>
+
           <p class="text-sm text-gray-500 mt-1 ml-2">trong danh sách <span class="underline">Kanban Board</span></p>
         </div>
       </div>
     </div>
 
     <div class="flex-1 overflow-y-auto px-4 pb-8 flex flex-col md:flex-row gap-8">
-      
+
       <div class="flex-1 space-y-6">
-        
+
         <div>
           <div class="flex gap-2 items-center mb-2">
             <span class="text-gray-600 text-lg">📝</span>
             <h3 class="font-semibold text-gray-700">Mô tả</h3>
           </div>
-          
-          <textarea 
-            [(ngModel)]="task.description"
-            rows="6"
-            placeholder="Thêm mô tả chi tiết hơn..."
-            class="w-full bg-gray-200 hover:bg-gray-100 focus:bg-white border border-transparent focus:border-blue-500 rounded p-3 text-sm transition-all resize-y outline-none"
-          ></textarea>
-          
+
+          <textarea [(ngModel)]="task.description" rows="6" placeholder="Thêm mô tả chi tiết hơn..."
+            class="w-full bg-gray-200 hover:bg-gray-100 focus:bg-white border border-transparent focus:border-blue-500 rounded p-3 text-sm transition-all resize-y outline-none"></textarea>
+
           <div class="mt-2">
-            <button (click)="saveDescription()" class="bg-blue-600 text-white px-4 py-1.5 rounded hover:bg-blue-700 font-medium text-sm">Lưu</button>
+            <button (click)="saveDescription()"
+              class="bg-blue-600 text-white px-4 py-1.5 rounded hover:bg-blue-700 font-medium text-sm">Lưu</button>
           </div>
         </div>
 
@@ -52,14 +48,62 @@
 
       <div class="w-full md:w-48 shrink-0 space-y-3">
         <h3 class="text-xs font-bold text-gray-500 uppercase">Thao tác</h3>
-        
-        <button (click)="deleteTask()" class="w-full text-left px-3 py-2 bg-gray-200 hover:bg-red-100 hover:text-red-700 rounded text-sm font-medium transition flex items-center gap-2">
-            Xóa thẻ
+
+        <button (click)="deleteTask()"
+          class="w-full text-left px-3 py-2 bg-gray-200 hover:bg-red-100 hover:text-red-700 rounded text-sm font-medium transition flex items-center gap-2">
+          Xóa thẻ
         </button>
 
-        <button class="w-full text-left px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded text-sm font-medium transition flex items-center gap-2 opacity-50 cursor-not-allowed">
-            Thành viên (Coming soon)
-        </button>
+        <div class="relative">
+          <h3 class="text-xs font-bold text-gray-500 uppercase mb-2">Người thực hiện</h3>
+
+          <div (click)="showMemberDropdown = !showMemberDropdown"
+            class="flex items-center gap-2 p-2 bg-gray-200 hover:bg-gray-300 rounded cursor-pointer transition w-full">
+            <ng-container *ngIf="task.assignee">
+              <div
+                class="w-6 h-6 rounded-full bg-blue-500 text-white text-xs flex items-center justify-center font-bold">
+                {{ task.assignee.name?.charAt(0)?.toUpperCase() }}
+              </div>
+              <span class="text-sm font-medium text-gray-700 truncate">{{ task.assignee.name }}</span>
+            </ng-container>
+
+            <ng-container *ngIf="!task.assignee">
+              <div
+                class="w-6 h-6 rounded-full bg-gray-300 border border-dashed border-gray-500 flex items-center justify-center text-xs text-gray-600">
+                👤
+              </div>
+              <span class="text-sm font-medium text-gray-600">Chưa chỉ định</span>
+            </ng-container>
+          </div>
+
+          <div *ngIf="showMemberDropdown"
+            class="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl z-10 overflow-hidden">
+            <div class="p-2 text-xs font-bold text-gray-500 uppercase bg-gray-50 text-center border-b">
+              Chọn thành viên
+            </div>
+
+            <ul class="max-h-48 overflow-y-auto">
+              <li *ngIf="task.assignee" (click)="assignMember(null)"
+                class="p-2 text-sm hover:bg-red-50 text-red-600 cursor-pointer flex items-center gap-2">
+                ✕ Gỡ bỏ phân công
+              </li>
+
+              <li *ngFor="let member of members" (click)="assignMember(member.user.id)"
+                class="p-2 text-sm hover:bg-blue-50 cursor-pointer flex items-center gap-2 border-t border-gray-100">
+                <div
+                  class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center font-bold">
+                  {{ member.user.name?.charAt(0)?.toUpperCase() }}
+                </div>
+                <div class="flex flex-col">
+                  <span class="font-medium text-gray-800">{{ member.user.name }}</span>
+                  <span class="text-xs text-gray-400">{{ member.role }}</span>
+                </div>
+
+                <span *ngIf="task.assignee?.id === member.user.id" class="ml-auto text-blue-600">✓</span>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
 
     </div>

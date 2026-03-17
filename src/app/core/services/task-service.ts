@@ -31,4 +31,9 @@ export class TaskService {
   deleteTask(id: number) {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+  // 5. Gán người thực hiện task
+  assignUser(taskId: number, assigneeId: number | null) {
+    return this.http.post<Task>(`${this.apiUrl}/${taskId}/assign`, { assigneeId });
+  }
 }

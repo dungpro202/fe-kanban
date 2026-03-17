@@ -14,11 +14,15 @@ export class TaskDetailComponent {
   private taskService = inject(TaskService);
 
   @Input() task!: Task; // Nhận task từ BoardDetail
+  @Input() members: any[] = []; // Nhận danh sách thành viên để gán task
   @Output() close = new EventEmitter<void>(); // Báo đóng modal
   @Output() taskUpdated = new EventEmitter<Task>(); // Báo update thành công để refresh UI
   @Output() taskDeleted = new EventEmitter<number>(); // Báo xóa thành công
 
+  
+
   isEditingTitle = false;
+  showMemberDropdown = false; // Biến bật/tắt menu chọn người
 
   // Lưu mô tả (Description)
   saveDescription() {
@@ -54,6 +58,19 @@ export class TaskDetailComponent {
         this.taskDeleted.emit(this.task.id);
         this.close.emit();
       }
+    });
+  }
+
+
+  // Hàm gán thành viên
+  assignMember(userId: number | null) {
+    this.taskService.assignUser(this.task.id, userId).subscribe({
+      next: (updatedTask) => {
+        this.task = updatedTask; // Cập nhật UI local
+        this.taskUpdated.emit(updatedTask); // Báo cho Board ngoài kia biết
+        this.showMemberDropdown = false; // Đóng dropdown
+      },
+      error: (err) => alert('Lỗi phân công: ' + err.message)
     });
   }
 }
