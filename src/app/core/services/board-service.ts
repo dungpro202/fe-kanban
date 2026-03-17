@@ -24,4 +24,9 @@ export class BoardService {
   getBoardDetail(id: number) {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
+
+  // 4. Thêm thành viên vào bảng bằng Email (Shared Board)
+  addMember(boardId: number, email: string) {
+    return this.http.post<any>(`${this.apiUrl}/${boardId}/members`, { email });
+  }
 }

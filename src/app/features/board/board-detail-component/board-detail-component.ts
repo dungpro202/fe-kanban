@@ -7,10 +7,11 @@ import { Board, Column, Task } from '../../../core/models/board.model';
 import { TaskService } from '../../../core/services/task-service';
 import { TaskDetailComponent } from '../task-detail-component/task-detail-component';
 import { ColumnService } from '../../../core/services/column-service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-board-detail-component',
-  imports: [CommonModule, DragDropModule, TaskDetailComponent],
+  imports: [CommonModule, DragDropModule, TaskDetailComponent, FormsModule],
   templateUrl: './board-detail-component.html',
   styleUrl: './board-detail-component.scss',
 })
@@ -212,5 +213,32 @@ export class BoardDetailComponent {
         }
       });
     }
+  }
+
+  // Biến quản lý Modal Mời thành viên
+  showInviteModal = false;
+  inviteEmail = '';
+
+  // Hàm gọi API mời thành viên
+  inviteMember() {
+    if (!this.inviteEmail.trim() || !this.board) return;
+
+    this.boardService.addMember(this.board.id, this.inviteEmail).subscribe({
+      next: (newMember) => {
+        // Cập nhật UI: Push thành viên mới vào danh sách hiện tại
+        this.board!.members.push(newMember);
+        
+        // Đóng form và reset input
+        this.showInviteModal = false;
+        this.inviteEmail = '';
+        alert('Đã thêm thành viên thành công!');
+        
+        this.cdr.detectChanges(); // Ép vẽ lại UI
+      },
+      error: (err) => {
+        // Backend ném lỗi BadRequest hoặc NotFound thì sẽ lọt vào đây
+        alert(err.error?.message || 'Có lỗi xảy ra khi mời thành viên');
+      }
+    });
   }
 }
