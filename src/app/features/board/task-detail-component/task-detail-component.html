@@ -40,7 +40,8 @@
 
           <div class="mt-2">
             <button (click)="saveDescription()"
-              class="bg-blue-600 text-white px-4 py-1.5 rounded hover:bg-blue-700 font-medium text-sm">Lưu</button>
+              class="bg-blue-600 text-white px-4 py-1.5 rounded hover:bg-blue-700 font-medium text-sm">Lưu mô
+              tả</button>
           </div>
         </div>
 
@@ -102,6 +103,27 @@
                 <span *ngIf="task.assignee?.id === member.user.id" class="ml-auto text-blue-600">✓</span>
               </li>
             </ul>
+          </div>
+        </div>
+        <div class="mt-4 relative bg-gray-100 p-3 rounded-lg border border-gray-200">
+          <h3 class="text-xs font-bold text-gray-500 uppercase mb-2">Ngày & Giờ hết hạn</h3>
+
+          <div class="flex flex-col gap-2">
+            <input type="datetime-local" [(ngModel)]="tempDueDate"
+              class="w-full px-3 py-2 bg-white border border-gray-300 rounded text-sm font-medium text-gray-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+
+            <div class="flex gap-2 mt-1">
+              <button (click)="saveDueDate()"
+                class="flex-1 bg-blue-600 text-white px-3 py-1.5 rounded text-sm font-medium hover:bg-blue-700 transition">
+                Lưu ngày hết hạn
+              </button>
+
+              <button *ngIf="task.dueDate" (click)="removeDueDate()"
+                class="px-3 py-1.5 bg-red-100 text-red-600 rounded text-sm font-medium hover:bg-red-200 transition"
+                title="Gỡ bỏ ngày hết hạn">
+                Gỡ bỏ
+              </button>
+            </div>
           </div>
         </div>
       </div>

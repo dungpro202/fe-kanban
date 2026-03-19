@@ -23,7 +23,7 @@ export class TaskService {
   }
 
   // 3. Cập nhật thông tin Task (Title, Description...)
-  updateTask(id: number, data: { title?: string; description?: string }) {
+  updateTask(id: number, data: { title?: string; description?: string; dueDate?: string | null }) {
     return this.http.patch<Task>(`${this.apiUrl}/${id}`, data);
   }
 

@@ -27,6 +27,7 @@ export interface Task {
   columnId: number;
   assignee?: User;
   // more field...
+  dueDate?: string | null;
 }
 
 // Interface cho Column

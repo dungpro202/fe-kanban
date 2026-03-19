@@ -23,7 +23,7 @@ export class BoardDetailComponent {
   private cdr = inject(ChangeDetectorRef);
 
 
-  board: Board | null = null;
+  board?: Board | null | undefined = null;
 
   // Biến lưu task đang được chọn để xem chi tiết
   selectedTask: Task | null = null;
@@ -180,7 +180,7 @@ export class BoardDetailComponent {
           this.board.columns = this.board.columns.filter(c => c.id !== columnId);
         }
 
-         // todo : sử dụng signal để cập nhật UI thay vì ép vẽ lại
+        // todo : sử dụng signal để cập nhật UI thay vì ép vẽ lại
         this.cdr.markForCheck();
       },
       error: (err) => alert('Không thể xóa: ' + err.message)
@@ -199,7 +199,7 @@ export class BoardDetailComponent {
     if (this.board) {
       // 1. Cập nhật UI ngay lập tức cho mượt
       moveItemInArray(this.board.columns, event.previousIndex, event.currentIndex);
-      
+
       // Lấy ID của cột vừa bị kéo (nó đang nằm ở vị trí mới rồi)
       const columnId = this.board.columns[event.currentIndex].id;
       const newPosition = event.currentIndex;
@@ -227,12 +227,12 @@ export class BoardDetailComponent {
       next: (newMember) => {
         // Cập nhật UI: Push thành viên mới vào danh sách hiện tại
         this.board!.members.push(newMember);
-        
+
         // Đóng form và reset input
         this.showInviteModal = false;
         this.inviteEmail = '';
         alert('Đã thêm thành viên thành công!');
-        
+
         this.cdr.detectChanges(); // Ép vẽ lại UI
       },
       error: (err) => {
@@ -240,5 +240,21 @@ export class BoardDetailComponent {
         alert(err.error?.message || 'Có lỗi xảy ra khi mời thành viên');
       }
     });
+  }
+
+  get extraMembersCount(): number {
+    const length = this.board?.members?.length ?? 0;
+    return length > 2 ? length - 2 : 0;
+  }
+
+  // Thêm hàm này vào class BoardDetailComponent
+  isOverdue(dateString: string | null | undefined): boolean {
+    if (!dateString) return false;
+    const dueDate = new Date(dateString);
+    const today = new Date();
+    // Reset giờ phút giây để chỉ so sánh ngày
+    today.setHours(0, 0, 0, 0); 
+    
+    return dueDate < today;
   }
 }
